@@ -21,7 +21,8 @@ namespace OauthServer
 
                 Claims=new List<Claim>
                 {
-                    new Claim("given_name","maruf")
+                    new Claim("given_name","maruf"),
+                    new Claim("address","mirpur")
                 }
             }
         };

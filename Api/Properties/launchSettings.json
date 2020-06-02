@@ -2,15 +2,12 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
-    "iis": {
-      "applicationUrl": "http://localhost/Client",
-      "sslPort": 0
-    },
     "iisExpress": {
-      "applicationUrl": "http://localhost:6511",
-      "sslPort": 44353
+      "applicationUrl": "http://localhost:4337",
+      "sslPort": 44396
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "Project",
@@ -18,11 +15,12 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:44353"
+      "applicationUrl": "https://localhost:44396"
     },
-    "Client": {
+    "Api": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "weatherforecast",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
