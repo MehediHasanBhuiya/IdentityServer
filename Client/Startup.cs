@@ -4,11 +4,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Client.HttpHandlers;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,6 +31,16 @@ namespace Client
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddAuthorization(context =>
+            {
+                context.AddPolicy("HaveCountry", policyBuild =>
+                {
+                    policyBuild.RequireAuthenticatedUser();
+                    policyBuild.RequireClaim("country", "bd");
+                });
+            });
+
             services.AddAuthentication(option =>
             {
                 option.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -45,10 +57,16 @@ namespace Client
                  option.ClientSecret = "client_secreat";
                  option.ResponseType = "code";
                  option.Scope.Add("address");
+                 option.Scope.Add("offline_access");
                  option.Scope.Add("MyApi");
+                 option.Scope.Add("country");
+                 option.ClaimActions.MapUniqueJsonKey("country","country");
 
                  option.SaveTokens = true;
+                 option.GetClaimsFromUserInfoEndpoint = true;
              });
+
+            
             services.AddHttpContextAccessor();
             services.AddTransient<BearerTokenHandler>();
 

@@ -15,13 +15,14 @@ namespace OauthServer
             {
               new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
-                new IdentityResources.Address()
+                new IdentityResources.Address(),
+                new IdentityResource("country","this is the country they lived",new List<string>{"country"})
             };
 
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
             { 
-                new ApiResource("MyApi","My api")
+                new ApiResource("MyApi","My api"),
             };
 
         public static IEnumerable<Client> Clients =>
@@ -29,6 +30,9 @@ namespace OauthServer
             {
                 new Client
                 {
+                    AllowOfflineAccess=true,
+                    RefreshTokenExpiration=TokenExpiration.Sliding,
+                    UpdateAccessTokenClaimsOnRefresh=true,
                     ClientName="Client",
                     ClientId="client_id",
                     ClientSecrets={new Secret("client_secreat".Sha256()) },
@@ -47,7 +51,8 @@ namespace OauthServer
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Address,
-                        "MyApi"
+                        "MyApi",
+                        "country"
                     }
                 }
             };

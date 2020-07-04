@@ -48,6 +48,7 @@ namespace Client.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         }
+        [Authorize(Policy = "HaveCountry")]
         public async Task<string> Address()
         {
             var httpclientreq = http.CreateClient("server");

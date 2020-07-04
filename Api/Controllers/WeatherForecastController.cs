@@ -19,6 +19,7 @@ namespace Api.Controllers
 
         [Route("")]
         [HttpGet]
+        [Authorize("ApiPolicy")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();

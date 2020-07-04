@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using IdentityServer4.AccessTokenValidation;
+using Api.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api
 {
@@ -28,11 +30,21 @@ namespace Api
         {
             services.AddControllers();
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
-                .AddIdentityServerAuthentication(con=>
+                .AddIdentityServerAuthentication(con =>
                 {
                     con.Authority = "https://localhost:5001";
                     con.ApiName = "MyApi";
                 });
+            services.AddHttpContextAccessor();
+            services.AddScoped<IAuthorizationHandler, ApiPolicyHandler>();
+            services.AddAuthorization(option =>
+            {
+                option.AddPolicy("ApiPolicy", policypuilder =>
+                {
+                    policypuilder.RequireAuthenticatedUser();
+                    policypuilder.AddRequirements(new ApiPolicyRequirement());
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

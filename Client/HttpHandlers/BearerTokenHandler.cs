@@ -25,6 +25,7 @@ namespace Client.HttpHandlers
             CancellationToken cancellationToken)
         {
             var accessToken = await httpContext.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+            var refreshToken = await httpContext.HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken);
             if (!string.IsNullOrWhiteSpace(accessToken))
             {
                 request.SetBearerToken(accessToken);
