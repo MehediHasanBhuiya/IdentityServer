@@ -22,7 +22,7 @@ namespace Client.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IHttpClientFactory http;
 
-        public HomeController(ILogger<HomeController> logger,IHttpClientFactory http)
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory http)
         {
             _logger = logger;
             this.http = http;
@@ -47,7 +47,39 @@ namespace Client.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+
+            var httpclientreq = http.CreateClient("server");
+            var discoveryDocument = await httpclientreq.GetDiscoveryDocumentAsync();
+            if (discoveryDocument.IsError)
+            {
+                throw new Exception(discoveryDocument.Error);
+            }
+
+            var accessTokenRevocation = await httpclientreq.RevokeTokenAsync(new TokenRevocationRequest
+            {
+                ClientId = "client_id",
+                ClientSecret = "client_secreat",
+                Address = discoveryDocument.RevocationEndpoint,
+                Token = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken)
+            });
+            if (accessTokenRevocation.IsError)
+            {
+                throw new Exception(accessTokenRevocation.Error);
+            }
+
+            var refreshTokenRevocation = await httpclientreq.RevokeTokenAsync(new TokenRevocationRequest
+            {
+                ClientId = "client_id",
+                ClientSecret = "client_secreat",
+                Address = discoveryDocument.RevocationEndpoint,
+                Token = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.RefreshToken)
+            });
+            if (refreshTokenRevocation.IsError)
+            {
+                throw new Exception(refreshTokenRevocation.Error);
+            }
         }
+
         [Authorize(Policy = "HaveCountry")]
         public async Task<string> Address()
         {
@@ -74,11 +106,11 @@ namespace Client.Controllers
         public async Task<IActionResult> WeatherInfo()
         {
             var response = http.CreateClient("api");
-            var x = await response.SendAsync(new HttpRequestMessage(HttpMethod.Get,response.BaseAddress));
+            var x = await response.SendAsync(new HttpRequestMessage(HttpMethod.Get, response.BaseAddress));
             x.EnsureSuccessStatusCode();
             var content = await x.Content.ReadAsStringAsync();
             return Json(content);
         }
-        
+
     }
 }

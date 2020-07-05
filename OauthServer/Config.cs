@@ -22,7 +22,9 @@ namespace OauthServer
         public static IEnumerable<ApiResource> Apis =>
             new ApiResource[]
             { 
-                new ApiResource("MyApi","My api"),
+                new ApiResource("MyApi","My api"){
+                
+                ApiSecrets={new Secret("api_secreat".Sha256()) }}
             };
 
         public static IEnumerable<Client> Clients =>
@@ -30,6 +32,7 @@ namespace OauthServer
             {
                 new Client
                 {
+                    AccessTokenType=AccessTokenType.Reference,
                     AllowOfflineAccess=true,
                     RefreshTokenExpiration=TokenExpiration.Sliding,
                     UpdateAccessTokenClaimsOnRefresh=true,

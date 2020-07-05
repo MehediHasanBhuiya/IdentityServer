@@ -34,6 +34,7 @@ namespace Api
                 {
                     con.Authority = "https://localhost:5001";
                     con.ApiName = "MyApi";
+                    con.ApiSecret = "api_secreat";
                 });
             services.AddHttpContextAccessor();
             services.AddScoped<IAuthorizationHandler, ApiPolicyHandler>();
